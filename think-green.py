@@ -12,15 +12,7 @@ pygame.init()
 pygame.key.set_repeat(400, 50)
 
 # Define objects and load images
-logging.info("Loading images")
-class NoWrapList(list):
-    """A list that doesn't allow negative indices"""
-
-    def __getitem__(self, key):
-        if not 0 <= key < len(self):
-            raise IndexError
-        else:
-            return super(NoWrapList, self).__getitem__(key)
+logging.info("Loading images and objects")
 
 class Grid(object):
 
@@ -30,28 +22,43 @@ class Grid(object):
 
     @property
     def background(self):
-        return self.green_planet
+        if self.count_entities() < 50:
+            return self.green_planet
+        else:
+            return self.red_planet
 
     def __init__(self):
         self.screen_size = (748, 600)
-        self.grid_offset = (231, 218)
+        self.grid_offset = (231, 220)
         self.width = 22
         self.height = 22
         self.square_size = 13
-        self.entities = [[list() for square in range(self.height)]
-                         for column in range(self.width)]
+        self.entities = {}
+        self.draw_count = 0
 
     def add_entity(self, entity, coordinates):
-        column, square = coordinates
-        self.entities[column][square].append(entity)
+        w, h = coordinates
+        if not 0 <= w < self.width or not 0 <= h < self.height:
+            raise IndexError("Coordinates out of bounds")
+        self.entities.setdefault((w, h), []).append(entity)
+
+    def count_entities(self):
+        return sum(len(x) for x in self.entities.itervalues())
+
+    def pop_entity(self, entity):
+        for coordinates, entities in self.entities.iteritems():
+            if entity in entities:
+                self.entities[coordinates].remove(entity)
+                if len(self.entities[coordinates]) == 0:
+                    del self.entities[coordinates]
+                return coordinates
 
     def draw(self, screen):
+        self.draw_count = (self.draw_count + 1) % 240
         screen.blit(self.background, (0, 0))
-        for column, squares in enumerate(self.entities):
-            for square, entities in enumerate(squares):
-                coordinates = (column, square)
-                for entity in entities:
-                    screen.blit(entity.image, self.grid_pixels(coordinates))
+        for coordinates, entities in self.entities.iteritems():
+            for entity in entities:
+                screen.blit(entity.image, self.grid_pixels(coordinates))
 
     def grid_pixels(self, coordinates):
         return (coordinates[0] * self.square_size + self.grid_offset[0],
@@ -70,15 +77,22 @@ class Collect(Entity):
     def image(self):
         if self.direction == 'right':
             return self.image_right
-        if self.direction == 'down':
+        elif self.direction == 'up':
             return pygame.transform.rotate(self.image_right, 90)
-        if self.direction == 'left':
+        elif self.direction == 'left':
             return pygame.transform.rotate(self.image_right, 180)
-        if self.direction == 'up':
+        elif self.direction == 'down':
             return pygame.transform.rotate(self.image_right, -90)
 
-    def move(self, left=None, down=None, up=None, right=None):
-        
+    def move(self, grid, coordinates_delta, direction):
+        self.direction = direction
+        coordinates = grid.pop_entity(self)
+        new_coordinates = tuple(sum(x) for x in zip(coordinates,
+                                                    coordinates_delta))
+        try:
+            grid.add_entity(self, new_coordinates)
+        except IndexError:
+            grid.add_entity(self, coordinates)
 
 class Recycle(Entity):
     image = pygame.image.load('recycle.png')
@@ -90,7 +104,7 @@ class Exit(Exception):
     pass
 
 
-# Make a grid and a Collect
+# Make a Grid and a Collect
 grid = Grid()
 collect = Collect()
 grid.add_entity(collect, (0, 0))
@@ -112,13 +126,14 @@ try:
                 logging.debug("[event]pygame.KEYDOWN "
                               "event.key={}".format(event.key))
                 if event.key in (pygame.K_LEFT, pygame.K_h):
-                    collect.move(left=1)
+                    collect.move(grid, (-1, 0), 'left')
                 elif event.key in (pygame.K_DOWN, pygame.K_j):
-                    collect.move(down=1)
+                    collect.move(grid, (0, 1), 'down')
                 elif event.key in (pygame.K_UP, pygame.K_k):
-                    collect.move(up=1)
+                    collect.move(grid, (0, -1), 'up')
                 elif event.key in (pygame.K_RIGHT, pygame.K_l):
-                    collect.move(right=1)
+                    collect.move(grid, (1, 0), 'right')
 except Exit:
     logging.info("Exiting")
-    pass
+    pygame.display.quit()
+    pygame.quit()
