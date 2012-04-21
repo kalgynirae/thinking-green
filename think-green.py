@@ -22,13 +22,55 @@ pygame.key.set_repeat(400, 50)
 logging.info("Loading images and objects")
 
 class Entity(object):
-    pass
+
+    def move(self, grid, coordinates_delta, direction=None):
+        coordinates = grid.pop_entity(self)
+        new_coordinates = tuple(sum(x) for x in zip(coordinates,
+                                                    coordinates_delta))
+        can_move = False
+        # Check for entities ahead of us
+        try:
+            entity = grid.get_entity(new_coordinates)
+        except IndexError:
+            # new_coordinates is out of bounds; don't move
+            grid.add_entity(self, coordinates)
+        except KeyError:
+            # The square is empty; move there.
+            try:
+                grid.add_entity(self, new_coordinates)
+        else:
+            if isinstance(entity, Hazard):
+                if isinstance(self, Neutralize):
+                    grid.remove_entity(new_coordinates)
+                    return
+                else:
+                    raise DeathError
+            else:
+                try:
+                    entity.move(grid, coordinates_delta, direction)
+                except IndexError:
+                    # Some entity would go out of bounds; stay put.
+                    grid.add_entity(self, coordinates)
+        except KeyError:
+            # No entity there
+        try:
+            grid.add_entity(self, new_coordinates)
+        except CollisionError:
+            # We've run into another entity
+            coordinates
+        finally:
+            if can_move:
+                grid.add_entity(self, new_coordinates)
+            else:
+                grid.add_entity(self, coordinates)
+        self.direction = direction
 
 class Grid(object):
 
     # Load the two backdrops
     green_planet = pygame.image.load('green_planet.png')
     red_planet = pygame.image.load('red_planet.png')
+    image_death = pygame.image.load('death.png')
 
     @property
     def background(self):
@@ -37,6 +79,10 @@ class Grid(object):
         else:
             return self.red_planet
 
+    @property
+    def is_complete(self):
+        return self.count_entities(Recycle) == 0
+
     def __init__(self, offset, width, height, square_size):
         self.grid_offset = offset
         self.width = width
@@ -44,13 +90,14 @@ class Grid(object):
         self.square_size = square_size
         self.entities = {}
         self.tick_count = 0
+        self.is_dead = False
 
     def add_entity(self, entity, coordinates):
         w, h = coordinates
         if not 0 <= w < self.width or not 0 <= h < self.height:
             raise IndexError("Coordinates out of bounds")
         if (w, h) in self.entities:
-            raise SquareFilledError
+            raise CollisionError
         else:
             self.entities[(w, h)] = entity
 
@@ -61,14 +108,17 @@ class Grid(object):
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
         for coordinates, entity in self.entities.iteritems():
-            screen.blit(entity.image, self.grid_pixels(coordinates))
+            image = entity.image if not self.is_dead else self.image_dead
+            screen.blit(image, self.grid_pixels(coordinates))
+
+    def get_entity(self, coordinates):
+        if not 0 <= w < self.width or not 0 <= h < self.height:
+            raise IndexError("Coordinates out of bounds")
+        return self.entities[coordinates]
 
     def grid_pixels(self, coordinates):
         return (coordinates[0] * self.square_size + self.grid_offset[0],
                 coordinates[1] * self.square_size + self.grid_offset[1])
-
-    def is_complete(self):
-        return self.count_entities(Recycle) == 0
 
     def pop_entity(self, entity):
         for coordinates, e in self.entities.iteritems():
@@ -88,7 +138,7 @@ class Grid(object):
                 try:
                     self.add_entity(Recycle(), self.random_coordinates())
                     success = True
-                except SquareFilledError:
+                except CollisionError:
                     pass
 
     def tick(self):
@@ -103,7 +153,7 @@ class Grid(object):
                     try:
                         self.add_entity(Hazard(), self.random_coordinates())
                         success = True
-                    except SquareFilledError:
+                    except CollisionError:
                         pass
 
 class Collect(Entity):
@@ -123,26 +173,25 @@ class Collect(Entity):
         elif self.direction == 'down':
             return pygame.transform.rotate(self.image_right, -90)
 
-    def move(self, grid, coordinates_delta, direction=None):
-        coordinates = grid.pop_entity(self)
-        new_coordinates = tuple(sum(x) for x in zip(coordinates,
-                                                    coordinates_delta))
-        try:
-            grid.add_entity(self, new_coordinates)
-        except IndexError:
-            grid.add_entity(self, coordinates)
-        self.direction = direction
-
 class Recycle(Entity):
     image = pygame.image.load('recycle.png')
 
 class Hazard(Entity):
     image = pygame.image.load('hazard.png')
 
+class Neutralize(Entity):
+    image = pygame.image.load('neutralize.png')
+
+class CollisionError(Exception):
+    pass
+
+class DeathError(Exception):
+    pass
+
 class Exit(Exception):
     pass
 
-class SquareFilledError(Exception):
+class OutOfBoundsError(Exception):
     pass
 
 screen = pygame.display.set_mode(SCREEN_SIZE)
@@ -180,7 +229,7 @@ try:
                     elif event.key in (pygame.K_RIGHT, pygame.K_l):
                         grid.tick()
                         collect.move(grid, (1, 0), 'right')
-            if grid.is_complete():
+            if grid.is_complete:
                 break
 
 except Exit:
