@@ -51,6 +51,13 @@ class Entity(object):
                     grid.add_entity(Death(), new_coordinates)
                     move, vanish = True, True
                     raise DeathError
+            elif isinstance(entity, Receptor):
+                if isinstance(self, Recycle):
+                    entity.increment(grid)
+                    move, vanish = True, True
+                else:
+                    move, vanish = False, False
+                    raise OutOfBoundsError # This is a hack
             else:
                 try:
                     entity.move(grid, coordinates_delta, direction)
@@ -187,7 +194,25 @@ class Neutralize(Entity):
     image = pygame.image.load('neutralize.png')
 
 class Receptor(Entity):
-    image = pygame.image.load('receptor.png')
+    images = []
+    images.append(pygame.image.load('receptor0.png'))
+    images.append(pygame.image.load('receptor1.png'))
+    images.append(pygame.image.load('receptor2.png'))
+    images.append(pygame.image.load('receptor3.png'))
+    images.append(pygame.image.load('receptor4.png'))
+
+    @property
+    def image(self):
+        return self.images[self.fuel]
+
+    def __init__(self):
+        self.fuel = 0
+
+    def increment(self, grid):
+        self.fuel += 1
+        if self.fuel == 5:
+            coordinates = grid.pop_entity(self)
+            grid.add_entity(Neutralize(), coordinates)
 
 class Recycle(Entity):
     image = pygame.image.load('recycle.png')
@@ -235,13 +260,14 @@ try:
                         coordinates, direction = (0, -1), 'up'
                     elif event.key in (pygame.K_RIGHT, pygame.K_l):
                         coordinates, direction = (1, 0), 'right'
-                    grid.tick()
                     try:
                         collect.move(grid, coordinates, direction)
                     except OutOfBoundsError:
                         pass
                     except DeathError:
                         grid.is_dead = True
+                    else:
+                        grid.tick()
             if grid.is_complete:
                 break
         # wait for any keypress

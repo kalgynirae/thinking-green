@@ -255,8 +255,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="281.08159"
-     inkscape:cy="255.36695"
+     inkscape:cx="373.09862"
+     inkscape:cy="287.9848"
      inkscape:document-units="px"
      inkscape:current-layer="layer6"
      showgrid="true"
@@ -1163,7 +1163,7 @@
      style="display:inline">
     <g
        id="g6825"
-       transform="matrix(1.3,0,0,1.3000004,84.080002,-69.428801)">
+       transform="matrix(1.3,0,0,1.3000004,20.026836,-81.512747)">
       <rect
          y="560.76202"
          x="-97.599998"
@@ -1178,14 +1178,14 @@
          inkscape:connector-curvature="0" />
     </g>
     <g
-       style="display:inline"
+       style="display:inline;fill:#7ae216;fill-opacity:1"
        id="g6825-3"
        transform="matrix(1.3,0,0,1.3,-144.72,-69.428576)"
        inkscape:export-filename="/home/lumpy/python/ludumdare23/collect.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <path
-         style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         style="color:#000000;fill:#7ae216;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001000000000;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
          d="m 328.4,580.76202 0,10 10,0 0,-10 -10,0 z m 4.5,1 5,4 -5,4 0,-2 -4,0 0,-4 4,0 0,-2 z"
          id="rect5800-8"
          inkscape:connector-curvature="0" />
@@ -1371,7 +1371,7 @@
        style="display:inline"
        id="g6825-727"
        transform="matrix(1.3,0,0,1.3000004,408.96908,73.027477)"
-       inkscape:export-filename="/home/lumpy/python/ludumdare23/receptor.png"
+       inkscape:export-filename="/home/lumpy/python/ludumdare23/receptor0.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <path
@@ -1381,5 +1381,186 @@
          id="rect5800-22"
          inkscape:connector-curvature="0" />
     </g>
+    <rect
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5800-26"
+       width="13"
+       height="13.000004"
+       x="-149.18401"
+       y="674.36951" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter Bold"
+       x="-146.8"
+       y="685.56207"
+       id="text3252"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3254"
+         x="-146.8"
+         y="685.56207">0</tspan></text>
+    <rect
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5800-26-1"
+       width="13"
+       height="13.000004"
+       x="-128.21068"
+       y="674.36951" />
+    <rect
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5800-26-9"
+       width="13"
+       height="13.000004"
+       x="-106.62868"
+       y="674.36951" />
+    <rect
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5800-26-4"
+       width="13"
+       height="13.000004"
+       x="-90.296173"
+       y="674.36951" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter Bold"
+       x="-125.93867"
+       y="685.56207"
+       id="text3252-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3254-3"
+         x="-125.93867"
+         y="685.56207">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter Bold"
+       x="-104.18867"
+       y="685.56207"
+       id="text3252-38"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3254-6"
+         x="-104.18867"
+         y="685.56207">2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter Bold"
+       x="-87.751175"
+       y="685.56207"
+       id="text3252-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3254-4"
+         x="-87.751175"
+         y="685.56207">3</tspan></text>
+    <rect
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5800-26-4-9"
+       width="13"
+       height="13.000004"
+       x="-73.676674"
+       y="674.36951" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter Bold"
+       x="-71.313675"
+       y="685.56207"
+       id="text3252-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3254-8"
+         x="-71.313675"
+         y="685.56207">4</tspan></text>
+    <path
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 321.2,841.56205 0,13 13,0 0,-13 -13,0 z m 6.46875,1.625 c 2.17,0 3.5625,1.79501 3.5625,4.875 0,3.08 -1.3925,4.875 -3.5625,4.875 -2.156,0 -3.53125,-1.781 -3.53125,-4.875 0,-3.09399 1.37525,-4.875 3.53125,-4.875 z m 0.0312,0.78125 c -1.078,0 -1.65625,1.34326 -1.65625,4.03125 0,2.744 0.55025,4.125 1.65625,4.125 1.106,0 1.625,-1.3465 1.625,-4.0625 0,-2.71599 -0.519,-4.09375 -1.625,-4.09375 z"
+       id="rect5800-26-3"
+       inkscape:connector-curvature="0" />
+    <path
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 308.2,815.56205 0,13 13,0 0,-13 -13,0 z m 6.8125,1.65625 0.90625,0 0,8.5625 0.15625,0.21875 1.3125,0.0625 0,0.6875 -4.84375,0 0,-0.6875 1.40625,-0.0937 0.15625,-0.25 0,-6.875 -0.125,-0.1875 -2,0.3125 0,-0.71875 3.03125,-1.03125 z"
+       id="rect5800-26-1-4"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/lumpy/python/ludumdare23/receptor1.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 347.2,802.56205 0,13 13,0 0,-13 -13,0 z m 6.53125,1.625 c 1.876,0 3.0625,1.12601 3.0625,2.75 0,1.792 -1.61075,3.29226 -4.71875,5.40625 l 3.90625,0 0.25,-1.25 0.875,0 0,2.65625 -6.78125,0 0,-1.09375 c 2.954,-2.29599 4.5625,-3.84375 4.5625,-5.59375 0,-1.246 -0.686,-1.96875 -1.75,-1.96875 -0.252,0 -0.5325,0.0443 -0.8125,0.15625 l 0,1.8125 c -0.308,0.168 -0.595,0.25 -0.875,0.25 -0.616,0 -1,-0.38075 -1,-0.96875 0,-1.162 1.26525,-2.15625 3.28125,-2.15625 z"
+       id="rect5800-26-9-9"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/lumpy/python/ludumdare23/receptor2.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 360.2,841.56205 0,13 13,0 0,-13 -13,0 z m 6.46875,1.65625 c 1.862,0 3.0625,0.98576 3.0625,2.34375 0,1.106 -0.8005,1.9 -2.3125,2.25 1.708,0.126 2.65625,0.97601 2.65625,2.25 0,1.582 -1.49825,2.84375 -3.90625,2.84375 -1.722,0 -2.84375,-0.826 -2.84375,-1.75 0,-0.546 0.398,-0.90625 1,-0.90625 0.168,0 0.3525,0.055 0.5625,0.125 l 0.4375,1.5 c 0.364,0.14 0.68875,0.21875 0.96875,0.21875 1.064,0 1.875,-0.87675 1.875,-1.96875 0,-1.022 -0.7475,-1.71875 -1.9375,-1.71875 -0.196,0 -0.497,0.0377 -0.875,0.0937 l 0,-1.03125 c 0.14,0.014 0.28025,0.0312 0.40625,0.0312 1.316,0 2.0625,-0.64075 2.0625,-1.71875 0,-0.98 -0.69675,-1.6875 -1.71875,-1.6875 -0.238,0 -0.5325,0.0755 -0.8125,0.1875 l 0,1.625 c -0.224,0.14 -0.42475,0.1875 -0.71875,0.1875 -0.602,0 -1.03125,-0.3775 -1.03125,-0.9375 0,-1.008 1.221,-1.9375 3.125,-1.9375 z"
+       id="rect5800-26-4-91"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/lumpy/python/ludumdare23/receptor3.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="m 386.2,841.56205 0,13 13,0 0,-13 -13,0 z m 7.34375,1.71875 1.34375,0 0,5.84375 1.59375,0 0,1.09375 -1.59375,0 0,2.96875 -1.625,0 0,-2.96875 -4.34375,0 0,-1.125 4.625,-5.8125 z m -0.28125,1.9375 -3.09375,3.90625 3.09375,0 0,-3.90625 z"
+       id="rect5800-26-4-9-9"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/lumpy/python/ludumdare23/receptor4.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5800-26-1-6"
+       width="13"
+       height="13.000004"
+       x="-54.853165"
+       y="674.36951" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter Bold"
+       x="-54.184166"
+       y="685.56207"
+       id="text3252-3-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3254-3-0"
+         x="-54.184166"
+         y="685.56207">+</tspan></text>
+    <rect
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5800-26-1-6-5"
+       width="13"
+       height="13.000004"
+       x="-39.053165"
+       y="674.36951" />
+    <rect
+       style="color:#000000;fill:#eeeeec;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44400001;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect5800-26-1-6-7"
+       width="13"
+       height="13.000004"
+       x="-19.053165"
+       y="674.36951" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter Bold"
+       x="-67.831001"
+       y="716.92963"
+       id="text3252-3-4-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3254-3-0-2"
+         x="-67.831001"
+         y="716.92963" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter Bold"
+       x="-112.88417"
+       y="715.07513"
+       id="text3252-3-4-6"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3254-3-0-7"
+         x="-112.88417"
+         y="715.07513">+</tspan></text>
   </g>
 </svg>
