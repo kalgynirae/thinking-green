@@ -14,11 +14,10 @@ logging.basicConfig(level=logging.INFO)
 
 # Initialize pygame
 logging.info("Initializing pygame")
+pygame.mixer.pre_init(44100)
 pygame.init()
-# Set up key repeat (delay, interval)
 pygame.key.set_repeat(100, 50)
 
-# Define objects and load images
 logging.info("Loading images and objects")
 
 class Entity(object):
@@ -286,17 +285,35 @@ def wait_for_continue(clock, grid, pause=0):
                         count > pause):
                     return
 
+def play_music(music_id):
+    if music_id == 1:
+        pygame.mixer.music.set_volume(0.7)
+        pygame.mixer.music.load('music/tiny_world.ogg')
+        pygame.mixer.music.play(-1)
+    if music_id == 2:
+        pygame.mixer.music.set_volume(0.6)
+        pygame.mixer.music.load('music/recycling_is_fun.ogg')
+        pygame.mixer.music.play(-1)
+    if music_id == 3:
+        pygame.mixer.music.set_volume(0.8)
+        pygame.mixer.music.load('music/death_error.ogg')
+        pygame.mixer.music.play(0)
 
+# Set up display
 pygame.display.set_caption("Think Green")
 pygame.display.set_icon(pygame.image.load('images/icon.gif'))
 screen = pygame.display.set_mode(SCREEN_SIZE)
 clock = pygame.time.Clock()
 try:
     # Title screen
+    play_music(1)
     grid = Grid(GRID_OFFSET, GRID_WIDTH, GRID_HEIGHT, GRID_SQUARE_SIZE)
     grid.show_title = True
     while True:
         wait_for_continue(clock, grid, pause=180)
+        # Switch music
+        pygame.mixer.music.fadeout(600)
+        play_music(2)
         logging.info("Generating new level")
         grid = Grid(GRID_OFFSET, GRID_WIDTH, GRID_HEIGHT, GRID_SQUARE_SIZE)
         grid.setup()
@@ -327,6 +344,7 @@ try:
                         except DeathError:
                             grid.is_dead = True
                             grid.show_explain = False
+                            play_music(3)
                         else:
                             grid.tick()
             # Draw updates
