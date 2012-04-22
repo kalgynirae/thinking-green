@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.DEBUG)
 logging.info("Initializing pygame")
 pygame.init()
 # Set up key repeat (delay, interval)
-pygame.key.set_repeat(400, 50)
+pygame.key.set_repeat(100, 50)
 
 # Define objects and load images
 logging.info("Loading images and objects")
@@ -75,7 +75,7 @@ class Entity(object):
                     grid.add_entity(self, new_coordinates)
             else:
                 grid.add_entity(self, coordinates)
-        self.direction = direction
+            self.direction = direction
 
 class Grid(object):
 
@@ -99,6 +99,7 @@ class Grid(object):
         self.entities = {}
         self.tick_count = 0
         self.is_dead = False
+        self.collect = None
 
     def add_entity(self, entity, coordinates):
         w, h = coordinates
@@ -118,6 +119,11 @@ class Grid(object):
         for coordinates, entity in self.entities.iteritems():
             screen.blit(entity.image, self.grid_pixels(coordinates))
 
+    def get_coordinates(self, entity):
+        for coordinates, e in self.entities.iteritems():
+            if e is entity:
+                return coordinates
+
     def get_entity(self, coordinates):
         w, h = coordinates
         if not 0 <= w < self.width or not 0 <= h < self.height:
@@ -135,36 +141,43 @@ class Grid(object):
                 return coordinates
 
     def random_coordinates(self):
-        return (random.choice(range(self.width)),
-                random.choice(range(self.height)))
+        return (random.choice(range(1, self.width - 1)),
+                random.choice(range(1, self.height - 1)))
 
     def remove_entity(self, coordinates):
         del self.entities[coordinates]
 
     def setup(self):
-        self.spawn_entity(Recycle, 20)
-        self.spawn_entity(Receptor, 5)
-        self.spawn_entity(Hazard, 3)
-        # Spawn 10 Recycles in random locations
-        # Same for a few hazards
+        self.collect = Collect()
+        grid.add_entity(self.collect, (grid.width // 2, grid.height // 2))
+        self.spawn_entity(Recycle, 30)
+        self.spawn_entity(Receptor, 7)
+        self.spawn_entity(Hazard, 5)
 
     def spawn_entity(self, type, number=1):
         for i in range(number):
             success = False
             while not success:
-                try:
-                    self.add_entity(type(), self.random_coordinates())
-                    success = True
-                except CollisionError:
-                    pass
+                coordinates = self.random_coordinates()
+                if coordinates not in self.collect.coordinates_in_front(grid):
+                    try:
+                        self.add_entity(type(), coordinates)
+                        success = True
+                    except CollisionError:
+                        pass
 
     def tick(self):
         self.tick_count += 1
         logging.debug("Grid.tick_count={}".format(self.tick_count))
-        if self.tick_count % 30 == 0:
+        if self.tick_count % 40 == 0:
+            logging.debug("Spawning new Recycle")
+            self.spawn_entity(Recycle)
+        if self.tick_count % 280 == 180:
+            logging.debug("Spawning new Receptor")
+            self.spawn_entity(Receptor)
+        if self.tick_count % 280 == 0:
             self.tick_count = 0
-            # Spawn new hazard
-            logging.debug("Spawning new hazard")
+            logging.debug("Spawning new Hazard")
             self.spawn_entity(Hazard)
 
 class Collect(Entity):
@@ -183,6 +196,18 @@ class Collect(Entity):
             return pygame.transform.rotate(self.image_right, 180)
         elif self.direction == 'down':
             return pygame.transform.rotate(self.image_right, -90)
+
+    def coordinates_in_front(self, grid):
+        w, h = grid.get_coordinates(self)
+        if self.direction == 'left':
+            return tuple((w-n, h) for n in range(1, 8))
+        if self.direction == 'down':
+            return tuple((w, h+n) for n in range(1, 8))
+        if self.direction == 'up':
+            return tuple((w, h-n) for n in range(1, 8))
+        if self.direction == 'right':
+            return tuple((w+n, h) for n in range(1, 8))
+
 
 class Death(Entity):
     image = pygame.image.load('images/death.png')
@@ -236,8 +261,6 @@ try:
         # Generate levels
         logging.info("Generating new level")
         grid = Grid(GRID_OFFSET, GRID_WIDTH, GRID_HEIGHT, GRID_SQUARE_SIZE)
-        collect = Collect()
-        grid.add_entity(collect, (grid.width // 2, grid.height // 2))
         grid.setup()
         while True:
             clock.tick(60)
@@ -263,7 +286,7 @@ try:
                         coordinates, direction = (1, 0), 'right'
                     if coordinates:
                         try:
-                            collect.move(grid, coordinates, direction)
+                            grid.collect.move(grid, coordinates, direction)
                         except OutOfBoundsError:
                             pass
                         except DeathError:
