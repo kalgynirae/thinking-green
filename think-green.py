@@ -168,7 +168,7 @@ class Grid(object):
     def setup(self):
         self.collect = Collect()
         grid.add_entity(self.collect, (grid.width // 2, grid.height // 2))
-        self.spawn_entity(Recycle, 30)
+        self.spawn_entity(Recycle, 25)
         self.spawn_entity(Receptor, 7)
         self.spawn_entity(Hazard, 5)
         self.show_explain = True
@@ -231,10 +231,10 @@ class Neutralize(Entity):
 class Receptor(Entity):
     images = []
     images.append(pygame.image.load('images/receptor0.png'))
-    images.append(pygame.image.load('images/receptor1.png'))
-    images.append(pygame.image.load('images/receptor2.png'))
-    images.append(pygame.image.load('images/receptor3.png'))
     images.append(pygame.image.load('images/receptor4.png'))
+    images.append(pygame.image.load('images/receptor3.png'))
+    images.append(pygame.image.load('images/receptor2.png'))
+    images.append(pygame.image.load('images/receptor1.png'))
 
     @property
     def image(self):
@@ -310,7 +310,7 @@ try:
     grid = Grid(GRID_OFFSET, GRID_WIDTH, GRID_HEIGHT, GRID_SQUARE_SIZE)
     grid.show_title = True
     while True:
-        wait_for_continue(clock, grid, pause=180)
+        wait_for_continue(clock, grid, pause=240)
         # Switch music
         pygame.mixer.music.fadeout(600)
         play_music(2)
