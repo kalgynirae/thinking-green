@@ -27,40 +27,45 @@ class Entity(object):
         coordinates = grid.pop_entity(self)
         new_coordinates = tuple(sum(x) for x in zip(coordinates,
                                                     coordinates_delta))
-        can_move = False
+        move, vanish = False, False
         # Check for entities ahead of us
         try:
             entity = grid.get_entity(new_coordinates)
         except IndexError:
             # new_coordinates is out of bounds; don't move
-            grid.add_entity(self, coordinates)
+            move, vanish = False, False
+            raise OutOfBoundsError
         except KeyError:
             # The square is empty; move there.
-            try:
-                grid.add_entity(self, new_coordinates)
+            move, vanish = True, False
         else:
+            # There is an entity there, figure out what to do
             if isinstance(entity, Hazard):
                 if isinstance(self, Neutralize):
+                    # If we're a Neutralize and it's a Hazard, remove both
                     grid.remove_entity(new_coordinates)
-                    return
+                    move, vanish = True, True
                 else:
+                    # Everything explodes
+                    grid.remove_entity(new_coordinates)
+                    grid.add_entity(Death(), new_coordinates)
+                    move, vanish = True, True
                     raise DeathError
             else:
                 try:
                     entity.move(grid, coordinates_delta, direction)
-                except IndexError:
-                    # Some entity would go out of bounds; stay put.
-                    grid.add_entity(self, coordinates)
-        except KeyError:
-            # No entity there
-        try:
-            grid.add_entity(self, new_coordinates)
-        except CollisionError:
-            # We've run into another entity
-            coordinates
+                except OutOfBoundsError:
+                    move, vanish = False, False
+                    raise OutOfBoundsError
+                except DeathError:
+                    move, vanish = True, False
+                    raise DeathError
+                else:
+                    move, vanish = True, False
         finally:
-            if can_move:
-                grid.add_entity(self, new_coordinates)
+            if move:
+                if not vanish:
+                    grid.add_entity(self, new_coordinates)
             else:
                 grid.add_entity(self, coordinates)
         self.direction = direction
@@ -70,18 +75,14 @@ class Grid(object):
     # Load the two backdrops
     green_planet = pygame.image.load('green_planet.png')
     red_planet = pygame.image.load('red_planet.png')
-    image_death = pygame.image.load('death.png')
 
     @property
     def background(self):
-        if self.count_entities(Hazard) < 10:
-            return self.green_planet
-        else:
-            return self.red_planet
+        return self.green_planet if not self.is_dead else self.red_planet
 
     @property
     def is_complete(self):
-        return self.count_entities(Recycle) == 0
+        return self.is_dead or self.count_entities(Hazard) == 0
 
     def __init__(self, offset, width, height, square_size):
         self.grid_offset = offset
@@ -108,10 +109,10 @@ class Grid(object):
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
         for coordinates, entity in self.entities.iteritems():
-            image = entity.image if not self.is_dead else self.image_dead
-            screen.blit(image, self.grid_pixels(coordinates))
+            screen.blit(entity.image, self.grid_pixels(coordinates))
 
     def get_entity(self, coordinates):
+        w, h = coordinates
         if not 0 <= w < self.width or not 0 <= h < self.height:
             raise IndexError("Coordinates out of bounds")
         return self.entities[coordinates]
@@ -130,13 +131,22 @@ class Grid(object):
         return (random.choice(range(self.width)),
                 random.choice(range(self.height)))
 
+    def remove_entity(self, coordinates):
+        del self.entities[coordinates]
+
     def setup(self):
+        self.spawn_entity(Recycle, 20)
+        self.spawn_entity(Receptor, 5)
+        self.spawn_entity(Hazard, 3)
         # Spawn 10 Recycles in random locations
-        for i in range(10):
+        # Same for a few hazards
+
+    def spawn_entity(self, type, number=1):
+        for i in range(number):
             success = False
             while not success:
                 try:
-                    self.add_entity(Recycle(), self.random_coordinates())
+                    self.add_entity(type(), self.random_coordinates())
                     success = True
                 except CollisionError:
                     pass
@@ -144,17 +154,11 @@ class Grid(object):
     def tick(self):
         self.tick_count += 1
         logging.debug("Grid.tick_count={}".format(self.tick_count))
-        if self.tick_count % 10 == 0:
-            # Spawn new hazards
-            logging.debug("Spawning new hazards")
-            success = False
-            for i in range(2):
-                while not success:
-                    try:
-                        self.add_entity(Hazard(), self.random_coordinates())
-                        success = True
-                    except CollisionError:
-                        pass
+        if self.tick_count % 30 == 0:
+            self.tick_count = 0
+            # Spawn new hazard
+            logging.debug("Spawning new hazard")
+            self.spawn_entity(Hazard)
 
 class Collect(Entity):
     image_right = pygame.image.load('collect.png')
@@ -173,14 +177,20 @@ class Collect(Entity):
         elif self.direction == 'down':
             return pygame.transform.rotate(self.image_right, -90)
 
-class Recycle(Entity):
-    image = pygame.image.load('recycle.png')
+class Death(Entity):
+    image = pygame.image.load('death.png')
 
 class Hazard(Entity):
     image = pygame.image.load('hazard.png')
 
 class Neutralize(Entity):
     image = pygame.image.load('neutralize.png')
+
+class Receptor(Entity):
+    image = pygame.image.load('receptor.png')
+
+class Recycle(Entity):
+    image = pygame.image.load('recycle.png')
 
 class CollisionError(Exception):
     pass
@@ -202,7 +212,7 @@ try:
         logging.info("Generating new level")
         grid = Grid(GRID_OFFSET, GRID_WIDTH, GRID_HEIGHT, GRID_SQUARE_SIZE)
         collect = Collect()
-        grid.add_entity(collect, grid.random_coordinates())
+        grid.add_entity(collect, (grid.width // 2, grid.height // 2))
         grid.setup()
         while True:
             clock.tick(60)
@@ -218,19 +228,26 @@ try:
                     logging.debug("[event]pygame.KEYDOWN "
                                   "event.key={}".format(event.key))
                     if event.key in (pygame.K_LEFT, pygame.K_h):
-                        grid.tick()
-                        collect.move(grid, (-1, 0), 'left')
+                        coordinates, direction = (-1, 0), 'left'
                     elif event.key in (pygame.K_DOWN, pygame.K_j):
-                        grid.tick()
-                        collect.move(grid, (0, 1), 'down')
+                        coordinates, direction = (0, 1), 'down'
                     elif event.key in (pygame.K_UP, pygame.K_k):
-                        grid.tick()
-                        collect.move(grid, (0, -1), 'up')
+                        coordinates, direction = (0, -1), 'up'
                     elif event.key in (pygame.K_RIGHT, pygame.K_l):
-                        grid.tick()
-                        collect.move(grid, (1, 0), 'right')
+                        coordinates, direction = (1, 0), 'right'
+                    grid.tick()
+                    try:
+                        collect.move(grid, coordinates, direction)
+                    except OutOfBoundsError:
+                        pass
+                    except DeathError:
+                        grid.is_dead = True
             if grid.is_complete:
                 break
+        # wait for any keypress
+        grid.draw(screen)
+        pygame.display.flip()
+        time.sleep(3)
 
 except Exit:
     logging.info("Exiting")
