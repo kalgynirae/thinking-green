@@ -252,6 +252,7 @@ try:
                 if event.type == pygame.KEYDOWN:
                     logging.debug("[event]pygame.KEYDOWN "
                                   "event.key={}".format(event.key))
+                    coordinates = None
                     if event.key in (pygame.K_LEFT, pygame.K_h):
                         coordinates, direction = (-1, 0), 'left'
                     elif event.key in (pygame.K_DOWN, pygame.K_j):
@@ -260,14 +261,15 @@ try:
                         coordinates, direction = (0, -1), 'up'
                     elif event.key in (pygame.K_RIGHT, pygame.K_l):
                         coordinates, direction = (1, 0), 'right'
-                    try:
-                        collect.move(grid, coordinates, direction)
-                    except OutOfBoundsError:
-                        pass
-                    except DeathError:
-                        grid.is_dead = True
-                    else:
-                        grid.tick()
+                    if coordinates:
+                        try:
+                            collect.move(grid, coordinates, direction)
+                        except OutOfBoundsError:
+                            pass
+                        except DeathError:
+                            grid.is_dead = True
+                        else:
+                            grid.tick()
             if grid.is_complete:
                 break
         # wait for any keypress
