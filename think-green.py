@@ -10,7 +10,7 @@ GRID_WIDTH = 22
 GRID_HEIGHT = 22
 GRID_SQUARE_SIZE = 13
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 # Initialize pygame
 logging.info("Initializing pygame")
@@ -82,6 +82,9 @@ class Grid(object):
     # Load the two backdrops
     green_planet = pygame.image.load('images/green_planet.png')
     red_planet = pygame.image.load('images/red_planet.png')
+    title_image = pygame.image.load('images/title.png')
+    continue_image = pygame.image.load('images/continue.png')
+    explain_image = pygame.image.load('images/explain.png')
 
     @property
     def background(self):
@@ -90,6 +93,17 @@ class Grid(object):
     @property
     def is_complete(self):
         return self.is_dead or self.count_entities(Hazard) == 0
+
+    @property
+    def message(self):
+        if self.show_title:
+            return self.title_image
+        elif self.show_continue:
+            return self.continue_image
+        elif self.show_explain:
+            return self.explain_image
+        else:
+            return None
 
     def __init__(self, offset, width, height, square_size):
         self.grid_offset = offset
@@ -100,6 +114,9 @@ class Grid(object):
         self.tick_count = 0
         self.is_dead = False
         self.collect = None
+        self.show_title = False
+        self.show_continue = False
+        self.show_explain = False
 
     def add_entity(self, entity, coordinates):
         w, h = coordinates
@@ -116,6 +133,8 @@ class Grid(object):
 
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
+        if self.message:
+            screen.blit(self.message, (0, screen.get_height() - 75))
         for coordinates, entity in self.entities.iteritems():
             screen.blit(entity.image, self.grid_pixels(coordinates))
 
@@ -159,7 +178,7 @@ class Grid(object):
             success = False
             while not success:
                 coordinates = self.random_coordinates()
-                if coordinates not in self.collect.coordinates_in_front(grid):
+                if coordinates not in self.collect.clear_coordinates(grid):
                     try:
                         self.add_entity(type(), coordinates)
                         success = True
@@ -197,17 +216,10 @@ class Collect(Entity):
         elif self.direction == 'down':
             return pygame.transform.rotate(self.image_right, -90)
 
-    def coordinates_in_front(self, grid):
+    def clear_coordinates(self, grid):
         w, h = grid.get_coordinates(self)
-        if self.direction == 'left':
-            return tuple((w-n, h) for n in range(1, 8))
-        if self.direction == 'down':
-            return tuple((w, h+n) for n in range(1, 8))
-        if self.direction == 'up':
-            return tuple((w, h-n) for n in range(1, 8))
-        if self.direction == 'right':
-            return tuple((w+n, h) for n in range(1, 8))
-
+        return ([(w, n) for n in range(0, grid.height)] +
+                [(n, h) for n in range(0, grid.width)])
 
 class Death(Entity):
     image = pygame.image.load('images/death.png')
@@ -254,19 +266,43 @@ class Exit(Exception):
 class OutOfBoundsError(Exception):
     pass
 
+def wait_for_continue(clock, grid, pause=0):
+    count = 0
+    while True:
+        clock.tick(60)
+        count += 1
+        if count == pause:
+            grid.show_title = False
+            grid.show_continue = True
+        grid.draw(screen)
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                logging.debug("[event]pygame.QUIT")
+                raise Exit
+            if event.type == pygame.KEYDOWN:
+                logging.debug("[event]pygame.KEYDOWN "
+                              "event.key={}".format(event.key))
+                if (event.key in (pygame.K_RETURN, pygame.K_SPACE) and
+                        count > pause):
+                    return
+
+
+pygame.display.set_caption("Think Green")
+pygame.display.set_icon(pygame.image.load('images/icon.gif'))
 screen = pygame.display.set_mode(SCREEN_SIZE)
 clock = pygame.time.Clock()
 try:
+    # Title screen
+    grid = Grid(GRID_OFFSET, GRID_WIDTH, GRID_HEIGHT, GRID_SQUARE_SIZE)
+    grid.show_title = True
     while True:
-        # Generate levels
+        wait_for_continue(clock, grid, pause=180)
         logging.info("Generating new level")
         grid = Grid(GRID_OFFSET, GRID_WIDTH, GRID_HEIGHT, GRID_SQUARE_SIZE)
         grid.setup()
         while True:
             clock.tick(60)
-            # Paint the backdrop
-            grid.draw(screen)
-            pygame.display.flip()
             # Process events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -293,12 +329,12 @@ try:
                             grid.is_dead = True
                         else:
                             grid.tick()
+            # Draw updates
+            grid.draw(screen)
+            pygame.display.flip()
+            # Break if done
             if grid.is_complete:
                 break
-        # wait for any keypress
-        grid.draw(screen)
-        pygame.display.flip()
-        time.sleep(3)
 
 except Exit:
     logging.info("Exiting")
