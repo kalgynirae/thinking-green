@@ -80,8 +80,8 @@ class Entity(object):
 class Grid(object):
 
     # Load the two backdrops
-    green_planet = pygame.image.load('green_planet.png')
-    red_planet = pygame.image.load('red_planet.png')
+    green_planet = pygame.image.load('images/green_planet.png')
+    red_planet = pygame.image.load('images/red_planet.png')
 
     @property
     def background(self):
@@ -168,7 +168,7 @@ class Grid(object):
             self.spawn_entity(Hazard)
 
 class Collect(Entity):
-    image_right = pygame.image.load('collect.png')
+    image_right = pygame.image.load('images/collect.png')
 
     def __init__(self):
         self.direction = 'right'
@@ -185,21 +185,21 @@ class Collect(Entity):
             return pygame.transform.rotate(self.image_right, -90)
 
 class Death(Entity):
-    image = pygame.image.load('death.png')
+    image = pygame.image.load('images/death.png')
 
 class Hazard(Entity):
-    image = pygame.image.load('hazard.png')
+    image = pygame.image.load('images/hazard.png')
 
 class Neutralize(Entity):
-    image = pygame.image.load('neutralize.png')
+    image = pygame.image.load('images/neutralize.png')
 
 class Receptor(Entity):
     images = []
-    images.append(pygame.image.load('receptor0.png'))
-    images.append(pygame.image.load('receptor1.png'))
-    images.append(pygame.image.load('receptor2.png'))
-    images.append(pygame.image.load('receptor3.png'))
-    images.append(pygame.image.load('receptor4.png'))
+    images.append(pygame.image.load('images/receptor0.png'))
+    images.append(pygame.image.load('images/receptor1.png'))
+    images.append(pygame.image.load('images/receptor2.png'))
+    images.append(pygame.image.load('images/receptor3.png'))
+    images.append(pygame.image.load('images/receptor4.png'))
 
     @property
     def image(self):
@@ -215,7 +215,7 @@ class Receptor(Entity):
             grid.add_entity(Neutralize(), coordinates)
 
 class Recycle(Entity):
-    image = pygame.image.load('recycle.png')
+    image = pygame.image.load('images/recycle.png')
 
 class CollisionError(Exception):
     pass
