@@ -5,7 +5,7 @@ import time
 import pygame
 
 SCREEN_SIZE = (748, 600)
-GRID_OFFSET = (231, 220)
+GRID_OFFSET = (231, 215)
 GRID_WIDTH = 22
 GRID_HEIGHT = 22
 GRID_SQUARE_SIZE = 13
@@ -172,8 +172,10 @@ class Grid(object):
         self.spawn_entity(Recycle, 30)
         self.spawn_entity(Receptor, 7)
         self.spawn_entity(Hazard, 5)
+        self.show_explain = True
 
     def spawn_entity(self, type, number=1):
+        logging.debug("Spawning {} {}".format(number, type))
         for i in range(number):
             success = False
             while not success:
@@ -189,14 +191,11 @@ class Grid(object):
         self.tick_count += 1
         logging.debug("Grid.tick_count={}".format(self.tick_count))
         if self.tick_count % 40 == 0:
-            logging.debug("Spawning new Recycle")
             self.spawn_entity(Recycle)
         if self.tick_count % 280 == 180:
-            logging.debug("Spawning new Receptor")
             self.spawn_entity(Receptor)
         if self.tick_count % 280 == 0:
             self.tick_count = 0
-            logging.debug("Spawning new Hazard")
             self.spawn_entity(Hazard)
 
 class Collect(Entity):
@@ -327,6 +326,7 @@ try:
                             pass
                         except DeathError:
                             grid.is_dead = True
+                            grid.show_explain = False
                         else:
                             grid.tick()
             # Draw updates
