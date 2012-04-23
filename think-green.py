@@ -1,5 +1,6 @@
 import logging
 import random
+import sys
 import time
 
 import pygame
@@ -10,7 +11,11 @@ GRID_WIDTH = 22
 GRID_HEIGHT = 22
 GRID_SQUARE_SIZE = 13
 
-logging.basicConfig(level=logging.INFO)
+try:
+    level = logging.DEBUG if sys.argv[1] == 'debug' else logging.WARNING
+except IndexError:
+    level = logging.WARNING
+logging.basicConfig(level=level)
 
 # Initialize pygame
 logging.info("Initializing pygame")
@@ -362,11 +367,7 @@ try:
                         coordinates, direction = (1, 0), 'right'
                     if coordinates:
                         try:
-                            logging.debug('combo={}'.format(combo))
-                            logging.debug('grid.combo={}'.format(grid.combo))
                             grid.collect.move(grid, coordinates, direction)
-                            logging.debug('combo={}'.format(combo))
-                            logging.debug('grid.combo={}'.format(grid.combo))
                         except OutOfBoundsError:
                             pass
                         except DeathError:
