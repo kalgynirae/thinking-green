@@ -211,14 +211,14 @@ class Grid(object):
         self.score -= 1
         self.tick_count += 1
         logging.debug("Grid.tick_count={}".format(self.tick_count))
-        tc = self.tick_count ** 0.2
-        if (self.tick_count % ((tc + 60) // tc) == 0 or
+        tc = self.tick_count ** 0.5
+        if (self.tick_count % ((tc + 200) // tc) == 0 or
                 self.count_entities(Recycle) < 3):
             self.spawn_entity(Recycle)
-        if (self.tick_count % ((tc + 900) // tc) == 120 or
+        if (self.tick_count % ((tc + 700) // tc) == 120 or
                 self.count_entities(Receptor) < 1):
             self.spawn_entity(Receptor)
-        if (self.tick_count % ((tc + 800) // tc) == 0 or
+        if (self.tick_count % ((tc + 700) // tc) == 0 or
                 self.count_entities(Hazard) < 1):
             self.spawn_entity(Hazard)
 
