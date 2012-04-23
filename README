@@ -1,6 +1,11 @@
 Think Green is an environmentally-friendly game for Python 2.x and
 pygame!
 
+GAMEPLAY TIPS:
+ * Score points by neutralizing hazards.
+ * Chain up recycles in front of receptors to get extra combo points!
+ * Survive for as long as possible.
+
 To run, simply clone the git repository or download and extract a zipped
 version, and then execute
 

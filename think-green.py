@@ -215,7 +215,7 @@ class Grid(object):
         if (self.tick_count % ((tc + 200) // tc) == 0 or
                 self.count_entities(Recycle) < 3):
             self.spawn_entity(Recycle)
-        if (self.tick_count % ((tc + 700) // tc) == 120 or
+        if (self.tick_count % ((tc + 700) // tc) == 0 or
                 self.count_entities(Receptor) < 1):
             self.spawn_entity(Receptor)
         if (self.tick_count % ((tc + 700) // tc) == 0 or
