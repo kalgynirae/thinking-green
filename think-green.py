@@ -23,6 +23,7 @@ logging.info("Loading images and objects")
 class Entity(object):
 
     def move(self, grid, coordinates_delta, direction=None):
+        global combo
         coordinates = grid.pop_entity(self)
         new_coordinates = tuple(sum(x) for x in zip(coordinates,
                                                     coordinates_delta))
@@ -43,6 +44,7 @@ class Entity(object):
                 if isinstance(self, Neutralize):
                     # If we're a Neutralize and it's a Hazard, remove both
                     grid.remove_entity(new_coordinates)
+                    grid.score += 500 * (grid.combo)**2
                     move, vanish = True, True
                 else:
                     # Everything explodes
@@ -53,6 +55,8 @@ class Entity(object):
             elif isinstance(entity, Receptor):
                 if isinstance(self, Recycle):
                     entity.increment(grid)
+                    grid.score += (grid.combo)**2 * 20
+                    combo = True
                     move, vanish = True, True
                 else:
                     move, vanish = False, False
@@ -91,7 +95,7 @@ class Grid(object):
 
     @property
     def is_complete(self):
-        return self.is_dead or self.count_entities(Hazard) == 0
+        return self.is_dead
 
     @property
     def message(self):
@@ -116,6 +120,9 @@ class Grid(object):
         self.show_title = False
         self.show_continue = False
         self.show_explain = False
+        self.show_score = False
+        self.score = 100
+        self.combo = 1
 
     def add_entity(self, entity, coordinates):
         w, h = coordinates
@@ -134,8 +141,16 @@ class Grid(object):
         screen.blit(self.background, (0, 0))
         if self.message:
             screen.blit(self.message, (0, screen.get_height() - 75))
+        if self.show_score:
+            self.draw_score(screen)
         for coordinates, entity in self.entities.iteritems():
             screen.blit(entity.image, self.grid_pixels(coordinates))
+
+    def draw_score(self, screen):
+        f = pygame.font.SysFont('DejaVu Sans', 14, True)
+        s = f.render(str(self.score), True, (0x2e, 0x34, 0x36))
+        screen.blit(s, (screen.get_width() - s.get_width() - 25,
+                        screen.get_height() - 60))
 
     def get_coordinates(self, entity):
         for coordinates, e in self.entities.iteritems():
@@ -172,6 +187,7 @@ class Grid(object):
         self.spawn_entity(Receptor, 7)
         self.spawn_entity(Hazard, 5)
         self.show_explain = True
+        self.show_score = True
 
     def spawn_entity(self, type, number=1):
         logging.debug("Spawning {} {}".format(number, type))
@@ -187,15 +203,20 @@ class Grid(object):
                         pass
 
     def tick(self):
+        self.score -= 1
         self.tick_count += 1
         logging.debug("Grid.tick_count={}".format(self.tick_count))
-        if self.tick_count % 40 == 0:
+        tc = self.tick_count ** 0.2
+        if (self.tick_count % ((tc + 60) // tc) == 0 or
+                self.count_entities(Recycle) < 3):
             self.spawn_entity(Recycle)
-        if self.tick_count % 280 == 180:
+        if (self.tick_count % ((tc + 900) // tc) == 120 or
+                self.count_entities(Receptor) < 1):
             self.spawn_entity(Receptor)
-        if self.tick_count % 280 == 0:
-            self.tick_count = 0
+        if (self.tick_count % ((tc + 800) // tc) == 0 or
+                self.count_entities(Hazard) < 1):
             self.spawn_entity(Hazard)
+
 
 class Collect(Entity):
     image_right = pygame.image.load('images/collect.png')
@@ -291,13 +312,15 @@ def play_music(music_id):
         pygame.mixer.music.load('music/tiny_world.ogg')
         pygame.mixer.music.play(-1)
     if music_id == 2:
-        pygame.mixer.music.set_volume(0.6)
+        pygame.mixer.music.set_volume(0.5)
         pygame.mixer.music.load('music/recycling_is_fun.ogg')
         pygame.mixer.music.play(-1)
     if music_id == 3:
         pygame.mixer.music.set_volume(0.8)
         pygame.mixer.music.load('music/death_error.ogg')
         pygame.mixer.music.play(0)
+
+combo = False
 
 # Set up display
 pygame.display.set_caption("Think Green")
@@ -310,7 +333,7 @@ try:
     grid = Grid(GRID_OFFSET, GRID_WIDTH, GRID_HEIGHT, GRID_SQUARE_SIZE)
     grid.show_title = True
     while True:
-        wait_for_continue(clock, grid, pause=240)
+        wait_for_continue(clock, grid, pause=200)
         # Switch music
         pygame.mixer.music.fadeout(600)
         play_music(2)
@@ -320,6 +343,7 @@ try:
         while True:
             clock.tick(60)
             # Process events
+            combo = False # This is pretty hackish
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     logging.debug("[event]pygame.QUIT")
@@ -338,20 +362,30 @@ try:
                         coordinates, direction = (1, 0), 'right'
                     if coordinates:
                         try:
+                            logging.debug('combo={}'.format(combo))
+                            logging.debug('grid.combo={}'.format(grid.combo))
                             grid.collect.move(grid, coordinates, direction)
+                            logging.debug('combo={}'.format(combo))
+                            logging.debug('grid.combo={}'.format(grid.combo))
                         except OutOfBoundsError:
                             pass
                         except DeathError:
                             grid.is_dead = True
-                            grid.show_explain = False
                             play_music(3)
                         else:
+                            if combo:
+                                grid.combo += 1
+                            else:
+                                grid.combo = 1
                             grid.tick()
             # Draw updates
             grid.draw(screen)
             pygame.display.flip()
             # Break if done
             if grid.is_complete:
+                grid.show_explain = False
+                grid.draw(screen)
+                pygame.display.flip()
                 break
 
 except Exit:
