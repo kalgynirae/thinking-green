@@ -1,0 +1,16 @@
+Think Green is an environmentally-friendly game for Python 2.x and
+pygame!
+
+To run, simply clone the git repository or download and extract a zipped
+version, and then execute
+
+    python think-green.py
+
+Thinking Green requires pygame (and thus Python 2.x). If you're running
+a Linux-based OS, your distribution probably provides a package for
+pygame. If not, or if you're on Windows, download pygame from:
+http://www.pygame.org/download.shtml
+
+If you find you have to install pygame manually, here are a few tips:
+ * Make sure the pygame directory is on your Python path. Usually Python
+   provides a directory called "site-packages" for this sort of thing.
