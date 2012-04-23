@@ -49,7 +49,7 @@ class Entity(object):
                 if isinstance(self, Neutralize):
                     # If we're a Neutralize and it's a Hazard, remove both
                     grid.remove_entity(new_coordinates)
-                    grid.score += 500 * (grid.combo)**2
+                    grid.score += 1000 * int((grid.combo)**1.5)
                     move, vanish = True, True
                 else:
                     # Everything explodes
@@ -60,7 +60,7 @@ class Entity(object):
             elif isinstance(entity, Receptor):
                 if isinstance(self, Recycle):
                     entity.increment(grid)
-                    grid.score += (grid.combo)**2 * 20
+                    grid.score += (grid.combo)**2 * 50
                     combo = True
                     move, vanish = True, True
                 else:
@@ -215,7 +215,7 @@ class Grid(object):
         if (self.tick_count % ((tc + 200) // tc) == 0 or
                 self.count_entities(Recycle) < 3):
             self.spawn_entity(Recycle)
-        if (self.tick_count % ((tc + 700) // tc) == 0 or
+        if (self.tick_count % ((tc + 900) // tc) == 0 or
                 self.count_entities(Receptor) < 1):
             self.spawn_entity(Receptor)
         if (self.tick_count % ((tc + 700) // tc) == 0 or
