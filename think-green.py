@@ -1,3 +1,4 @@
+from itertools import product
 import logging
 import random
 import sys
@@ -12,16 +13,16 @@ GRID_HEIGHT = 22
 GRID_SQUARE_SIZE = 13
 
 try:
-    level = logging.DEBUG if sys.argv[1] == 'debug' else logging.WARNING
+    DEBUG = sys.argv[1] == 'debug'
 except IndexError:
-    level = logging.WARNING
-logging.basicConfig(level=level)
+    DEBUG = False
+logging.basicConfig(level=logging.DEBUG if DEBUG else logging.WARNING)
 
 # Initialize pygame
 logging.info("Initializing pygame")
 pygame.mixer.pre_init(44100)
 pygame.init()
-pygame.key.set_repeat(100, 50)
+pygame.key.set_repeat(100, 50 if not DEBUG else 5)
 
 logging.info("Loading images and objects")
 
@@ -119,6 +120,7 @@ class Grid(object):
         self.height = height
         self.square_size = square_size
         self.entities = {}
+        self.available_squares = list(product(range(width), range(height)))
         self.tick_count = 0
         self.is_dead = False
         self.collect = None
@@ -137,6 +139,7 @@ class Grid(object):
             raise CollisionError
         else:
             self.entities[(w, h)] = entity
+            self.available_squares.remove((w, h))
 
     def count_entities(self, type=Entity):
         return sum(1 for entity in self.entities.itervalues()
@@ -176,14 +179,31 @@ class Grid(object):
         for coordinates, e in self.entities.iteritems():
             if e is entity:
                 del self.entities[coordinates]
+                self.available_squares.append(coordinates)
                 return coordinates
 
     def random_coordinates(self):
-        return (random.choice(range(1, self.width - 1)),
-                random.choice(range(1, self.height - 1)))
+        success = False
+        n = len(self.available_squares)
+        if n < 1:
+            return None
+        cw, ch = self.get_coordinates(self.collect)
+        while not success:
+            w, h = random.choice(self.available_squares)
+            if w != cw and h != ch:
+                if (1 <= w < self.width - 1 and
+                        1 <= h < self.height - 1 or
+                        n < 130):
+                    success = True
+            elif n < 80:
+                if ((w == cw and abs(h - ch) >= n // 4) or
+                        (h == ch and abs(w - cw) >= n // 4)):
+                    success = True
+        return (w, h)
 
     def remove_entity(self, coordinates):
         del self.entities[coordinates]
+        self.available_squares.append(coordinates)
 
     def setup(self):
         self.collect = Collect()
@@ -197,23 +217,17 @@ class Grid(object):
     def spawn_entity(self, type, number=1):
         logging.debug("Spawning {} {}".format(number, type))
         for i in range(number):
-            success = False
-            while not success:
-                coordinates = self.random_coordinates()
-                if coordinates not in self.collect.clear_coordinates(grid):
-                    try:
-                        self.add_entity(type(), coordinates)
-                        success = True
-                    except CollisionError:
-                        pass
+            coordinates = self.random_coordinates()
+            if coordinates:
+                self.add_entity(type(), coordinates)
 
     def tick(self):
         self.score -= 1
         self.tick_count += 1
         logging.debug("Grid.tick_count={}".format(self.tick_count))
-        tc = self.tick_count ** 0.5
-        if (self.tick_count % ((tc + 200) // tc) == 0 or
-                self.count_entities(Recycle) < 3):
+        tc = self.tick_count ** 0.45
+        if (self.tick_count % ((tc + 250) // tc) == 0 or
+                self.count_entities(Recycle) < 5):
             self.spawn_entity(Recycle)
         if (self.tick_count % ((tc + 900) // tc) == 0 or
                 self.count_entities(Receptor) < 1):
@@ -365,6 +379,8 @@ try:
                         coordinates, direction = (0, -1), 'up'
                     elif event.key in (pygame.K_RIGHT, pygame.K_l):
                         coordinates, direction = (1, 0), 'right'
+                    elif DEBUG and event.key == pygame.K_F3:
+                        grid.tick()
                     if coordinates:
                         try:
                             grid.collect.move(grid, coordinates, direction)
