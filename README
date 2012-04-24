@@ -1,5 +1,5 @@
-Think Green is an environmentally-friendly game for Python 2.x and
-pygame!
+Think Green is an environmentally-friendly game for Python 2.7 and
+Pygame. See below for installation instructions.
 
 GAMEPLAY TIPS:
  * Score points by neutralizing hazards.
@@ -11,11 +11,42 @@ version, and then execute
 
     python think-green.py
 
-Thinking Green requires pygame (and thus Python 2.x). If you're running
-a Linux-based OS, your distribution probably provides a package for
-pygame. If not, or if you're on Windows, download pygame from:
-http://www.pygame.org/download.shtml
 
-If you find you have to install pygame manually, here are a few tips:
- * Make sure the pygame directory is on your Python path. Usually Python
-   provides a directory called "site-packages" for this sort of thing.
+INSTALLATION:
+
+To run Think Green, you need two thing installed:
+  * Python 2.7 – Python is a general-purpose programming language.
+    Python is installed by default on almost every Linux distribution,
+    but if you use Windows or Mac OS you'll probably need to install it
+    yourself. Just head on over to
+        http://www.python.org/download/
+    and grab the Python 2.7 installer for your operating system.
+  * Pygame – Pygame is a library (pre-packaged code) that makes it
+    easier to program games. If you use a Linux operating system, your
+    distribution probably has a package for Pygame. If you're using
+    Windows or Mac, head to
+        http://www.pygame.org/download.shtml
+    and grab the correct installer for your operating system. (Make sure
+    it's one that has "py2.7" in the filename.)
+You can test whether Pygame is installed correctly by opening the Python
+interpreter and typing
+    >>> import pygame
+If this doesn't print any errors, then you should be good to go.
+
+Once you have Python 2.7 and Pygame installed, you need to obtain the
+Think Green game files. If you know how, just clone this repository.
+Otherwise, download a .zip archive of the repository using this link
+    https://github.com/kalgynirae/thinking-green/zipball/master
+and extract the files to an easy-to-access folder.
+
+Run the game by executing think-green.py with Python. On Linux or
+Mac OS, you can open a terminal, navigate to the folder containing
+think-green.py, and type
+    python think-green.py
+On Windows, you can probably just double-click the file to run it.
+
+
+LICENSE:
+This game and all included files (code, music, images) are Copyright
+2012 Colin Chan and released under the GNU General Public License. See
+<http://www.gnu.org/licenses/> for more information.
