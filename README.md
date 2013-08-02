@@ -7,6 +7,10 @@ Python 2.7 and Pygame. See below for installation instructions.
 *   Chain up recycles in front of receptors to get extra combo points!
 *   Survive for as long as possible.
 
+## Screenshot
+
+![Think Green gameplay](http://lumeh.org/files/public/think_green_gameplay.png)
+
 ## Installing and running the game
 
 To run Think Green, you need two thing installed:
