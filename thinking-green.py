@@ -142,7 +142,7 @@ class Grid(object):
             self.available_squares.remove((w, h))
 
     def count_entities(self, type=Entity):
-        return sum(1 for entity in self.entities.itervalues()
+        return sum(1 for entity in self.entities.values()
                    if isinstance(entity, type))
 
     def draw(self, screen):
@@ -151,7 +151,7 @@ class Grid(object):
             screen.blit(self.message, (0, screen.get_height() - 75))
         if self.show_score:
             self.draw_score(screen)
-        for coordinates, entity in self.entities.iteritems():
+        for coordinates, entity in self.entities.items():
             screen.blit(entity.image, self.grid_pixels(coordinates))
 
     def draw_score(self, screen):
@@ -161,7 +161,7 @@ class Grid(object):
                         screen.get_height() - 60))
 
     def get_coordinates(self, entity):
-        for coordinates, e in self.entities.iteritems():
+        for coordinates, e in self.entities.items():
             if e is entity:
                 return coordinates
 
@@ -176,7 +176,7 @@ class Grid(object):
                 coordinates[1] * self.square_size + self.grid_offset[1])
 
     def pop_entity(self, entity):
-        for coordinates, e in self.entities.iteritems():
+        for coordinates, e in self.entities.items():
             if e is entity:
                 del self.entities[coordinates]
                 self.available_squares.append(coordinates)
@@ -342,7 +342,7 @@ def play_music(music_id):
 combo = False
 
 # Set up display
-pygame.display.set_caption("Think Green")
+pygame.display.set_caption("Thinking Green")
 pygame.display.set_icon(pygame.image.load('images/icon.gif'))
 screen = pygame.display.set_mode(SCREEN_SIZE)
 clock = pygame.time.Clock()
